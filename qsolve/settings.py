@@ -16,6 +16,10 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,7 +31,7 @@ SECRET_KEY = 'django-insecure-j-2c8cm@em8a2xvi7uzu^kq-%(mj)$1hpui2g8o7ni^k@rgukp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,10 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'first',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+
+    # my apps
+    'first',
+    'kit'
 ]
 
 MIDDLEWARE = [
@@ -121,6 +128,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -157,10 +166,5 @@ STORAGES = {
     },
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173"
-    
-]
+CORS_ALLOWED_ORIGINS = ['*']
 STATIC_ROOT = BASE_DIR / "staticfiles"
