@@ -7,8 +7,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .renderers import UserRenderer
 from rest_framework.permissions import IsAuthenticated
-from .models import User, Question
 from .serializers import *
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 def gettokensforuser(student):
     refresh = RefreshToken.for_user(student)
@@ -27,16 +27,21 @@ def gettokensforexpert(admin):
     }
 
 class UserRegistrationView(APIView):
-    renderer_classes = [UserRenderer]
     def post(self, request, format=None):
-        serializer = UserRegistrationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save(is_active=False)
-        token = gettokensforuser(user)
-        return Response(
-            {"token": token, "msg": "Registration Successful"},
-            status=status.HTTP_201_CREATED,
-        )
+        try:
+            serializer = UserRegistrationSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save(is_active=False)
+
+            return Response(
+                {"message": "Registration Successful"},
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as err:
+            print(err)
+            return Response({
+                'message': err.args
+            },status=500)
 
 
 class UserLoginView(APIView):
@@ -45,11 +50,44 @@ class UserLoginView(APIView):
         if serializer.is_valid():
             try:
                 user = User.objects.get(email=serializer.validated_data['email'])
+                json_user = {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email,
+                    'role': user.role,
+                    'experience': user.experience_level
+                }
                 if user.check_password(serializer.validated_data['password']):
-                    return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+                    token = gettokensforuser(user)
+                    return Response({'token': token,'user': json_user,"message": "Login successful"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
             except User.DoesNotExist:
                 return Response({"message": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class ResetPassword(APIView):
+
+    def post(self,request):
+        email=request.data['email']
+        password=request.data['password']
+        user = User.objects.get(email=email)
+
+        user.set_password(password)
+        user.save()
+
+        return Response({'message':'changed'},status=200)
+
+
+
+class GetUserByToken(APIView):
+    # authentication_classes = [JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        try:
+            return Response({'user': request.user})
+        except Exception as err:
+            print(err.args)
+            return Response({'message': "something went wrong"},status=500)

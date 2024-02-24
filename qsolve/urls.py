@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('first.urls')),
     path('kit/', include('kit.urls')),
+    path('questions/', include('questions.urls')),
 
 ]
 

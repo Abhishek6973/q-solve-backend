@@ -49,7 +49,9 @@ INSTALLED_APPS = [
 
     # my apps
     'first',
-    'kit'
+    'kit',
+    'questions',
+    'tags'
 ]
 
 MIDDLEWARE = [
@@ -62,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'qsolve.jwt.JWTUserMiddleware'
 ]
 
 ROOT_URLCONF = 'qsolve.urls'
@@ -92,7 +95,7 @@ DATABASES = {
     "default": dj_database_url.parse("postgres://q_solves_user:UYkQW4qxNnXWBH5RZOEGdqDssinmeMBH@dpg-cmv6vb7109ks73b9d8fg-a.singapore-postgres.render.com/q_solves")
 }
 
-
+AUTH_USER_MODEL = 'first.User'
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -139,8 +142,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
