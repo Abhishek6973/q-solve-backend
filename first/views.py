@@ -12,6 +12,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 def gettokensforuser(student):
     refresh = RefreshToken.for_user(student)
+    print(student, type(student))
     return {
         "refresh": str(refresh),
         "access": str(refresh.access_token),
@@ -58,6 +59,7 @@ class UserLoginView(APIView):
                     'experience': user.experience_level
                 }
                 if user.check_password(serializer.validated_data['password']):
+                    print(type(user))
                     token = gettokensforuser(user)
                     return Response({'token': token,'user': json_user,"message": "Login successful"}, status=status.HTTP_200_OK)
                 else:
@@ -81,13 +83,15 @@ class ResetPassword(APIView):
         return Response({'message':'changed'},status=200)
 
 
-
 class GetUserByToken(APIView):
-    # authentication_classes = [JWTAuthentication]
-    permission_classes=[IsAuthenticated]
-    def get(self,request):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
         try:
-            return Response({'user': request.user})
+            user = request.user
+            print(user)
+            serializer = UserSerializer(user)  
+            return Response({'user': serializer.data})
         except Exception as err:
-            print(err.args)
-            return Response({'message': "something went wrong"},status=500)
+            print(err)
+            return Response({'message': "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

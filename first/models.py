@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password,check_password
-# from django.contrib.auth.models import User
 from django.utils import timezone
 
 
@@ -37,7 +36,6 @@ class User(models.Model):
     total_upvote_count = models.IntegerField(default=0)
     phone_num = models.CharField(max_length=30, blank=True,null=True, unique=True)
     experience_level = models.CharField(max_length=30, choices=EXPERIENCE_LEVEL, default='Student')
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["name"]
     
