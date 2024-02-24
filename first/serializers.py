@@ -42,7 +42,7 @@ class UserLoginSerializer(serializers.Serializer):
                 raise serializers.ValidationError('Invalid credentials password')
         else:
             raise serializers.ValidationError('Email and password must be provided')
-
+        
         attrs['user'] = user
         return attrs
     

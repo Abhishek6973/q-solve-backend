@@ -95,7 +95,6 @@ DATABASES = {
     "default": dj_database_url.parse("postgres://q_solves_user:UYkQW4qxNnXWBH5RZOEGdqDssinmeMBH@dpg-cmv6vb7109ks73b9d8fg-a.singapore-postgres.render.com/q_solves")
 }
 
-AUTH_USER_MODEL = 'first.User'
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -136,6 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
