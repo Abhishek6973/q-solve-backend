@@ -4,6 +4,7 @@ import re
 import requests
 from .serializers import *
 import os
+import cloudinary.uploader
 import uuid
 from django.conf import settings
 import json
@@ -42,38 +43,27 @@ class KitLink(APIView):
             })
         except requests.RequestException as e:
             return JsonResponse({'message': 'Something went wrong'}, status=500)
-            
         
+                
 class KitImage(APIView):
-
-    def post(self,request):
+    def post(self, request):
         try:
             image_file = request.FILES['image']
-        
-            # Generate a random UUIDv4 name
             random_name = uuid.uuid4().hex
 
-            # Get the file extension
             _, ext = os.path.splitext(image_file.name)
 
-            # Concatenate random name and original file extension
             new_file_name = f'{random_name}{ext}'
+            print(new_file_name)
+            public_id = f'test/{new_file_name}'
 
-            # Construct the file path
-            file_path = os.path.join(settings.MEDIA_ROOT, 'kit', new_file_name)
-            file_url = f"{os.getenv('BACKEND_URL')}/media/kit/{new_file_name}"
-
-            # Write the uploaded file to disk
-            with open(file_path, 'wb+') as destination:
-                for chunk in image_file.chunks():
-                    destination.write(chunk)
-
-            return JsonResponse({'message': 'Image uploaded successfully', 'file_name': file_url}, status=200)
+            upload_result = cloudinary.uploader.upload(image_file, public_id=public_id)
             
+            return JsonResponse({'message': 'Image uploaded successfully', 'file_name': upload_result['url']}, status=200)
 
         except Exception as err:
             print(err.args)
-            return JsonResponse({'message':'something went wrong'},status=500)
+            return JsonResponse({'message': 'something went wrong'}, status=500)
         
 
 class createKitView(APIView):

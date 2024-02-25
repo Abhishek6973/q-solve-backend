@@ -51,3 +51,32 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
         fields='__all__'
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    otp = serializers.CharField(max_length=6)
+    new_password = serializers.CharField(min_length=6, max_length=128)
+
+    def validate_email(self, value):
+        try:
+            user = User.objects.get(email=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with this email does not exist.")
+        return value
+
+    def validate_otp(self, value):
+        email = self.initial_data.get('email')
+        user = User.objects.get(email=email)
+        if user.reset_password_token != value:
+            raise serializers.ValidationError("Invalid OTP")
+        return value
+
+    def save(self):
+        email = self.validated_data['email']
+        new_password = self.validated_data['new_password']
+        user = User.objects.get(email=email)
+        user.set_password(new_password)
+        user.reset_password_token = None
+        user.save()
