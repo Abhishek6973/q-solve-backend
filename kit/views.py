@@ -54,12 +54,17 @@ class KitImage(APIView):
             _, ext = os.path.splitext(image_file.name)
 
             new_file_name = f'{random_name}{ext}'
-            print(new_file_name)
             public_id = f'test/{new_file_name}'
 
             upload_result = cloudinary.uploader.upload(image_file, public_id=public_id)
+            file_url=upload_result['url']
             
-            return JsonResponse({'message': 'Image uploaded successfully', 'file_name': upload_result['url']}, status=200)
+            return JsonResponse({
+                "success" : 1,
+                "file": {
+                    "url" : file_url,
+                }
+            }, status=200) 
 
         except Exception as err:
             print(err.args)
