@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import cloudinary.uploader
+import cloudinary.api
 from pathlib import Path
 import dj_database_url
 import os
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -173,3 +176,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'diufbyktk',
+    'API_KEY': '249176439583443',
+    'API_SECRET': 'VYDrnbrJoddPyRXvEqn2oy8bWWA'
+}
